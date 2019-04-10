@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block body %}
+<form method="POST">
+ <!--모델 폼-->
+ {% csrf_token %}
+ {% bootstrap_form form %}
+ <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+{% endblock %}
