@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import PostForm
 from .models import Post
 from django.views.decorators.http import require_POST
@@ -23,7 +23,9 @@ def list(request):
    
 
 def update(request, id):
-    post = Post.objects.get(pk=id)
+    # post = Post.objects.get(pk=id)
+    # 해당하는 아이디가 없으면 에러페이지를 보여준다.
+    post = get_object_or_404(Post, pk=id)
     if request.method == "POST":
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
