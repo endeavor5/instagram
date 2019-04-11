@@ -4,15 +4,22 @@
   <div class="row justify-content-center">
     {% for post in posts %}
      <div class="card" style="width: 20rem;">
+        <div class="card-header">
+          <span>{{ post.user }}</span>
+        </div>
         <img src="{{ post.image.url }}" class="card-img-top" alt="...">
         <div class="card-body">
           <h5 class="card-title">{{ post.content }}</h5>
           <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+
+          <!--작성자만 수정, 삭제 가능-->
+          {% if post.user == request.user%}
           <form action={% url 'posts:delete' post.id %} method="POST">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">삭제</button>
           </form>
           <a href={% url 'posts:update' post.id %} class="btn btn-success">수정</a>
+          {% endif %}
         </div>
       </div>
     {% endfor %}

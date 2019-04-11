@@ -26,6 +26,10 @@ def update(request, id):
     # post = Post.objects.get(pk=id)
     # 해당하는 아이디가 없으면 에러페이지를 보여준다.
     post = get_object_or_404(Post, pk=id)
+    
+    if post.user != request.user:
+        return redirect('posts:list')
+    
     if request.method == "POST":
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
@@ -40,6 +44,8 @@ def update(request, id):
 @require_POST
 def delete(request, id):
     post = Post.objects.get(pk=id)
+    if post.user != request.user:
+        return redirect('posts:list')
     post.delete()
     return redirect('posts:list')
     
