@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import messages
-
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+# 로그인: AuthenticationForm, 회원가입: UserCreationForm
 # Create your views here.
 
 def login(request):
@@ -28,3 +27,17 @@ def logout(request):
     auth_logout(request)
     return redirect('posts:list')
     
+
+def signup(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        
+        if form.is_valid():
+            # user로 뽑는 이유? 결과물을 가지고 바로 로그인 해주려고
+            user = form.save()
+            # 회원가입이 끝나면 바로 로그인 해주기
+            auth_login(request, user)
+            redirect('posts:list')
+    else:
+        form = UserCreationForm()
+        return render(request, 'accounts/signup.html', {'form':form} )
