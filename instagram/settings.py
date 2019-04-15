@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'posts',
     'bootstrap4',
     'django_extensions',
+    'accounts',
 ]
 
 MIDDLEWARE = [
