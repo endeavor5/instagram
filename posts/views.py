@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import PostForm
 from .models import Post
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def create(request):
@@ -22,10 +23,10 @@ def list(request):
    return render(request, 'posts/list.html', {'posts':posts})
    
 
-def update(request, id):
+def update(request, post_id):
     # post = Post.objects.get(pk=id)
     # 해당하는 아이디가 없으면 에러페이지를 보여준다.
-    post = get_object_or_404(Post, pk=id)
+    post = get_object_or_404(Post, pk=post_id)
     
     if post.user != request.user:
         return redirect('posts:list')
@@ -48,11 +49,12 @@ def delete(request, id):
         return redirect('posts:list')
     post.delete()
     return redirect('posts:list')
-    
-    
-def like(request, id):
+
+
+# @login_required
+def like(request, post_id):
     # 1. like를 추가할 post를 가져옴
-    post = get_object_or_404(Post, id=id)
+    post = get_object_or_404(Post, pk=post_id)
     # post = Post.objects.get(id=id)
     # 2. 만약 유저가 해당 post를 이미 like 했다면, like를 제거하고
     #    아니라면 like를 추가한다.
@@ -60,4 +62,4 @@ def like(request, id):
         post.like_users.remove(request.user)
     else:
         post.like_users.add(request.user)
-    return redirect('post:lists')
+    return redirect('posts:list')
