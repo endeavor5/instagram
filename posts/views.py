@@ -4,6 +4,7 @@ from .models import Post, Comment
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 
+
 # Create your views here.
 def create(request):
    if request.method=="POST":
@@ -71,7 +72,7 @@ def like(request, post_id):
 
 # Comment
 @login_required
-@require_POST
+# @require_POST
 def comment_create(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     form = CommentForm(request.POST)
@@ -84,7 +85,7 @@ def comment_create(request, post_id):
         # commnet.post_id = post_id # 얘는 아이디를 넣어준 것
         comment.save()
         
-        return redirect('posts:list')
+    return redirect('posts:list')
 
 
 @login_required
@@ -97,5 +98,4 @@ def comment_delete(request, post_id, comment_id):
         comment.delete()
 
     return redirect('posts:list')
-    
     

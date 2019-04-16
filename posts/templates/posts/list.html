@@ -13,11 +13,12 @@
 
           <!--작성자만 수정, 삭제 가능-->
           {% if post.user == request.user %}
-          <form action={% url 'posts:delete' post.id %} method="POST">
+          <form class="d-inline-block" action={% url 'posts:delete' post.id %} method="POST">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">삭제</button>
           </form>
           <a href={% url 'posts:update' post.id %} class="btn btn-success">수정</a>
+
           {% endif %}
         </div>
         
