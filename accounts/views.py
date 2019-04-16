@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 # 로그인: AuthenticationForm, 회원가입: UserCreationForm
+from django.contrib.auth import get_user_model
 # Create your views here.
 
 def login(request):
@@ -37,7 +38,16 @@ def signup(request):
             user = form.save()
             # 회원가입이 끝나면 바로 로그인 해주기
             auth_login(request, user)
-            redirect('posts:list')
+            return redirect('posts:list')
     else:
         form = UserCreationForm()
         return render(request, 'accounts/signup.html', {'form':form} )
+        
+        
+def people(request, username):
+    # 사용자에 대한 정보
+    # 1. settings.AUTH_USER_MODEL => django.conf
+    # 2. get_user_model()
+    # 3. User => django.contrib.auth.models 안쓰는 것이 좋다....
+    people = get_object_or_404(get_user_model(), username=username)
+    return render(request, 'accounts/people.html', {'people':people} )

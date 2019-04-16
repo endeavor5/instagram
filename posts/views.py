@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import PostForm
-from .models import Post
+from .forms import PostForm, CommentForm
+from .models import Post, Comment
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 
@@ -23,11 +23,12 @@ def create(request):
 
 def list(request):
    posts = Post.objects.all()
-   return render(request, 'posts/list.html', {'posts':posts})
+   form = CommentForm()
+   return render(request, 'posts/list.html', {'posts':posts, 'form':form})
    
 
 def update(request, post_id):
-    # post = Post.objects.get(pk=id)
+    # post = Post.objects.get(pk=post_id)
     # 해당하는 아이디가 없으면 에러페이지를 보여준다.
     post = get_object_or_404(Post, pk=post_id)
     
@@ -66,3 +67,35 @@ def like(request, post_id):
     else:
         post.like_users.add(request.user)
     return redirect('posts:list')
+
+
+# Comment
+@login_required
+@require_POST
+def comment_create(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        # comment의 유저 저장
+        # foreignKey가 2개이기 때문에 각각의 객체를 넣어줘야한다.
+        comment.user = request.user
+        comment.post = post # 이것은 객체를 바로 넣어준 것
+        # commnet.post_id = post_id # 얘는 아이디를 넣어준 것
+        comment.save()
+        
+        return redirect('posts:list')
+
+
+@login_required
+@require_POST
+def comment_delete(request, post_id, comment_id):
+    # post = get_object_or_404(Post, pk=post_id)
+    comment = Comment.objects.get(pk=comment_id)
+    
+    if comment.user == request.user:
+        comment.delete()
+
+    return redirect('posts:list')
+    
+    

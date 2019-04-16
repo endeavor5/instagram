@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load bootstrap4 %}
 {% block body %}
   <div class="row justify-content-center">
     {% for post in posts %}
@@ -10,10 +10,9 @@
         <img src="{{ post.image.url }}" class="card-img-top" alt="...">
         <div class="card-body">
           <h5 class="card-title">{{ post.content }}</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          
+
           <!--작성자만 수정, 삭제 가능-->
-          {% if post.user == request.user%}
+          {% if post.user == request.user %}
           <form action={% url 'posts:delete' post.id %} method="POST">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">삭제</button>
@@ -38,6 +37,33 @@
             {{ post.like_users.count }}명이 좋아합니다.
           </p>
         </div>
+        
+
+        <div class="card-body">
+          <!--Comment에 대한 ModelForm 작성-->
+          <form method="POST" action="{% url 'posts:comment_create' post.id%}">
+            <!--bootstrap Form-->
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button type="submit" class="btn btn-primary">submit</button>
+          </form>
+        </div>
+
+        <!--해당 글에 작성된 댓글을 모두 출력-->
+        {% for comment in post.comment_set.all %}
+        <div>
+          <strong>{{comment.user}}</strong> <span>{{comment.content}}</span>
+        
+        {% empty %} 댓글이 없습니다.  
+          {% if comment.user == request.user %}
+            <form method="POST" action="{% url 'posts:comment_delete' post.id comment.id %}">
+              {% csrf_token %}
+              <button type="submit" class='btn btn-danger'>삭제</button>
+            </form>
+          {% endif %}
+        </div>
+        {% endfor %}
+        
       </div>
     {% endfor %}
   </div>

@@ -3,7 +3,7 @@
 {% load bootstrap4 %}
 
 {% block body %}
-    <form method="POST" action="{% url 'posts:update' form.instance.id %}">
+    <form method="POST">
         {% csrf_token %}
         {% bootstrap_form form %}
         <button type="submit" class="btn btn-primary">Submit</button>    
