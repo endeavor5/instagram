@@ -4,7 +4,13 @@
 <div class="container">
   <h1>{{ people.username }}</h1>
   <p>{{people.last_name}} {{people.first_name}}</p>
-
+  <p>
+    <strong>{{ people.profile.nickname }}</strong>
+  </p>
+  
+  <p>
+    {{ people.profile.description }}
+  </p>
   {% if user == people %} 
 
   <a href="{% url 'accounts:password' %}" class="btn btn-danger">비밀번호변경</a>
