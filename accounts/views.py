@@ -4,8 +4,8 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm, PasswordChangeForm
 # 로그인: AuthenticationForm, 회원가입: UserCreationForm
 from django.contrib.auth import get_user_model, update_session_auth_hash
-from .forms import CustomUserChangeForm, ProfileForm
-from .models import Profile
+from .forms import CustomUserChangeForm, ProfileForm, CustomUserCreationForm
+from .models import Profile, User
 
 # Create your views here.
 
@@ -33,7 +33,7 @@ def logout(request):
 
 def signup(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form =CustomUserCreationForm(request.POST)
 
         if form.is_valid():
             # user로 뽑는 이유? 결과물을 가지고 바로 로그인 해주려고
@@ -43,7 +43,7 @@ def signup(request):
             auth_login(request, user)
         return redirect('posts:list')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
         
         return render(request, 'accounts/signup.html', {'form':form} )
         
@@ -84,7 +84,7 @@ def update(request):
         profile, created = Profile.objects.get_or_create(user=request.user)
         profile_form = ProfileForm(instance=profile)
             
-        #     profile_form = ProfileForm(instance=request.user)
+        # profile_form = ProfileForm(instance=request.user)
         # profile_form = ProfileForm(instance=request.user)
         
         # Profile.get_or_create(user=requeset.user)
@@ -117,3 +117,18 @@ def password(request):
     else:
         password_change_form = PasswordChangeForm(request.user)
         return render(request, 'accounts/password.html', {'password_change_form':password_change_form})
+        
+
+def follow(request, user_id):
+    # user_id = to user 즉, 내가 follow할 아이디
+    person = get_object_or_404(get_user_model(), pk=user_id)
+    
+    # 만약 현재 유저가 해당 유저를 이미 팔로우 하고 있었으면,
+    # unfollow
+    # 아니면 팔로우
+    if request.user in person.followers.all():
+        person.followers.remove(user=request.user)
+    else:
+        person.followers.add(user=request.user)
+        
+    return redirect('people', person.username)

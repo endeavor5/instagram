@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 # 추천하지 않는 방식
 from django.contrib.auth.models import User
 # 추천 방식
@@ -19,9 +19,15 @@ class CustomUserChangeForm(UserChangeForm):
         fields = ['username','email','first_name','last_name']    
     
     
+class CustomUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = get_user_model()
+        fields = UserCreationForm.Meta.fields
+        
+    
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields =['description', 'nickname']
         
-    
+
