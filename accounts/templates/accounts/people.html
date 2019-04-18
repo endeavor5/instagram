@@ -1,23 +1,41 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<div class="container">
-  <h1>{{ people.username }} <a href="" class="btn btn-primary">follow</a> </h1>
-  <p>{{people.last_name}} {{people.first_name}}</p>
-  <p>
-    <strong>{{ people.profile.nickname }}</strong>
-  </p>
-  
-  <p>
-    {{ people.profile.description }}
-  </p>
-  {% if user == people %} 
 
-  <a href="{% url 'accounts:password' %}" class="btn btn-danger">비밀번호변경</a>
-  <a href="{% url 'accounts:update' %}" class="btn btn-info">회원정보수정</a>
-  <a href="{% url 'accounts:delete' %}" class="btn btn-danger">회원탈퇴</a>
+<div class="container mt-5">
+  <div class="row">
+    <div class="mr-3">
+      <!--만약 현재 접속한 유저가 해당 페이지의 유저를 이미 팔로우하고 잇다면 unfollow -->
+      <h1>{{ people.username }} 
+      {% if people != user %}
+        {% if user in people.followers.all %}
+          <a href="{% url 'accounts:follow' people.id %}" class="btn btn-outline-primary">unfollow</a> 
+        {% else %}
+          <a href="{% url 'accounts:follow' people.id %}" class="btn btn-primary">follow</a> 
+        {% endif %}
+      {% endif %}
+      
+      </h1>
+      
+      <p>{{people.last_name}}{{people.first_name}}</p>
+      <strong>{{ people.profile.nickname }}</strong>
+      <p>
+        {{ people.profile.description }}
+      </p>  
+    </div>
+    
+    <div class="mt-2">
+      {% if user == people %}
+      <a href="{% url 'accounts:password' %}" class="btn btn-danger">비밀번호변경</a>
+      <a href="{% url 'accounts:update' %}" class="btn btn-info">회원정보수정</a>
+      <a href="{% url 'accounts:delete' %}" class="btn btn-danger">회원탈퇴</a>
+      {% endif %}
+    </div>
   
-  {% endif %}
+  </div>
+  
+   
+  
   
   <div class="row">
     {% for post in people.post_set.all %}

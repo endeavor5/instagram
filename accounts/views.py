@@ -127,8 +127,9 @@ def follow(request, user_id):
     # unfollow
     # 아니면 팔로우
     if request.user in person.followers.all():
-        person.followers.remove(user=request.user)
+        person.followers.remove(request.user)
     else:
-        person.followers.add(user=request.user)
+        person.followers.add(request.user)
         
+    print(request.user.followings.all())
     return redirect('people', person.username)
