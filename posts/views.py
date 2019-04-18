@@ -30,7 +30,7 @@ def list(request):
     my_posts = request.user.post_set.all()
     # 내가 팔로잉 하는 사람들 + 나의 게시물만 보여준다.
     followings = request.user.followings.all()
-    posts = Post.objects.filter(Q(user_id__in=request.user.followings.all())|Q(user=request.user))
+    posts = Post.objects.filter(Q(user_id__in=request.user.followings.all())|Q(user=request.user)).order_by('-id')
     
     print(posts.query)
     comment_form = CommentForm()

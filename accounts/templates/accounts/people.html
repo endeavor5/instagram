@@ -5,24 +5,36 @@
 <div class="container mt-5">
   <div class="row">
     <div class="mr-3">
-      <!--만약 현재 접속한 유저가 해당 페이지의 유저를 이미 팔로우하고 잇다면 unfollow -->
-      <h1>{{ people.username }} 
-      {% if people != user %}
-        {% if user in people.followers.all %}
-          <a href="{% url 'accounts:follow' people.id %}" class="btn btn-outline-primary">unfollow</a> 
-        {% else %}
-          <a href="{% url 'accounts:follow' people.id %}" class="btn btn-primary">follow</a> 
-        {% endif %}
-      {% endif %}
-      
-      </h1>
-      
-      <p>{{people.last_name}}{{people.first_name}}</p>
-      <strong>{{ people.profile.nickname }}</strong>
-      <p>
-        {{ people.profile.description }}
-      </p>  
+      <div class="row">
+        <div class="col-6">
+          {% if people.profile.image %}
+            <img src="{{ people.profile.image.url }}" style="border-radius:50%" width="70%">
+          {% else %}
+            <img src="https://i.imgur.com/xrSh9Z0.jpg" style="border-radius:50%" width="70%" alt="default">
+          {% endif %}
+        </div>
+        
+        <div>
+          <!--해당 유저가 이미 follow 하고 있다면 unfollow를 보여줌-->
+          <h1>{{ people.username }} 
+          {% if people != user %}
+            {% if user in people.followers.all %}
+              <a href="{% url 'accounts:follow' people.id %}" class="btn btn-outline-primary">unfollow</a> 
+            {% else %}
+              <a href="{% url 'accounts:follow' people.id %}" class="btn btn-primary">follow</a> 
+            {% endif %}
+          {% endif %}
+          </h1>
+          
+          <p>{{people.last_name}}{{people.first_name}}</p>
+          <strong>{{ people.profile.nickname }}</strong>
+          <p>
+            {{ people.profile.description }}
+          </p>  
+        </div>
+      </div>  
     </div>
+      
     
     <div class="mt-2">
       {% if user == people %}
@@ -34,15 +46,14 @@
   
   </div>
   
-   
-  
   
   <div class="row">
     {% for post in people.post_set.all %}
-    <div class="col-4">
-      <img src="{{ post.image.url }}" class="img-fluid"></img>
+    <div class="card col-4 mt-3 mr-3">
+      <img src="{{ post.image.url }}" class="img-fluid">
     </div>
     {% endfor %}
   </div>
 </div>
+
 {% endblock %}

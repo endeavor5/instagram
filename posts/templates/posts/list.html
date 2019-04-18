@@ -3,8 +3,7 @@
 {% block body %}
   <div class="row justify-content-center">
     {% for post in posts %}
-     <div class="card" style="width: 20rem;">
-
+     <div class="card mt-2 mr-2" style="width: 20rem;">
         <div class="card-header">
           <span>{{ post.user }}</span>
           
@@ -41,6 +40,10 @@
             {{ post.like_users.count }}명이 좋아합니다.
           </p>
           <hr>
+        </div>
+          
+          
+        <div class="card-body">  
           
           <!--Comment에 대한 modelform 작성-->
           <form method="POST" action="{% url 'posts:comment_create' post.id%}" class="d-inline">
@@ -49,25 +52,25 @@
             {% bootstrap_form comment_form %}
             <button type="submit" class="btn btn-primary" style="float:right">submit</button>
           </form>
-        </div>
+        
         
 
-        <hr>
-        <!--해당 글에 작성된 댓글을 모두 출력--> 
-        {% for comment in post.comment_set.all %}
-        <div>
-          <strong>{{comment.user}}</strong> <span>{{comment.content}}</span>
-          {% if comment.user == request.user %}
-            <form class="d-inline-block" method="POST" action="{% url 'posts:comment_delete' post.id comment.id %}">
-              {% csrf_token %}
-              <button type="submit" class='btn btn-danger pull-right'>삭제</button>
-            </form>
-          {% endif %}
+          <hr>
+          <!--해당 글에 작성된 댓글을 모두 출력--> 
+          {% for comment in post.comment_set.all %}
+            <strong>{{comment.user}}</strong> <span>{{comment.content}}</span>
+            {% if comment.user == request.user %}
+              <form class="d-inline-block" method="POST" action="{% url 'posts:comment_delete' post.id comment.id %}">
+                {% csrf_token %}
+                <button type="submit" class='btn btn-danger pull-right'>삭제</button>
+              </form>
+            {% endif %}
+          
+          {% empty %} 댓글이 없습니다.  
+          {% endfor %}
         
-        {% empty %} 댓글이 없습니다.  
+        
         </div>
-        {% endfor %}
-        
       </div>
     {% endfor %}
   </div>

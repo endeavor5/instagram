@@ -61,15 +61,16 @@ def people(request, username):
 # post를 업데이트하는 것과 동일하다.
 def update(request):
     if request.method == "POST":
-        user_change_form = CustomUserChangeForm(request.POST, instance=request.user)
-        profile_form = ProfileForm(data=request.POST, instance=request.user.profile) # 어떤 프로필인지 정확하게 골라내지 못한다.
+        user_change_form = CustomUserChangeForm(data=request.POST, instance=request.user)
+        profile_form = ProfileForm(data=request.POST, file=request.FILES, instance=request.user.profile) 
         
-        # profile_form = ProfileForm(request.POST, instance=request.user.profile) # 어떤 프로필인지 정확하게 골라내지 못한다.
         if user_change_form.is_valid() and profile_form.is_valid(): 
             # 객체를 돌려줌
             user = user_change_form.save()
-            profile_form.save()
-            return redirect('people', user.username)
+            
+            profile = profile_form.save()
+            print(profile.image.url)
+            return redirect('people', user)
             
     else:
         # form이 여러개이니까 이제는 명확하게 쓰자   
@@ -83,11 +84,6 @@ def update(request):
 
         profile, created = Profile.objects.get_or_create(user=request.user)
         profile_form = ProfileForm(instance=profile)
-            
-        # profile_form = ProfileForm(instance=request.user)
-        # profile_form = ProfileForm(instance=request.user)
-        
-        # Profile.get_or_create(user=requeset.user)
         
         context = {
             'user_change_form': user_change_form,
